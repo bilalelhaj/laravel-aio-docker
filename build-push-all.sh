@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -e
+
+# Usage: ./build-push-all.sh <arch>
+# Example: ./build-push-all.sh
+
+phpVersions=("8.5" "8.4")
+imageTypes=("fpm" "fpm-claude" "fpm-claude-beta" "frankenphp" "roadrunner" "openswoole")
+
+for phpVersion in "${phpVersions[@]}"; do
+  for imageType in "${imageTypes[@]}"; do
+     echo
+     echo "--------------------------------------------------"
+     echo "️⚽️ Building and pushing ghcr.io/jonaaix/laravel-aio:1.3-php${phpVersion}-${imageType}..."
+     echo "--------------------------------------------------"
+    ./build-image.sh "$phpVersion" "$imageType"
+  done
+
+  # After building all image types for one PHP version, push all tags
+  docker image push "ghcr.io/jonaaix/laravel-aio" -a
+done
+
+# PHP-agnostic variants — built once, independent of the PHP version.
+echo
+echo "--------------------------------------------------"
+echo "️⚽️ Building and pushing ghcr.io/jonaaix/laravel-aio:1.3-ai-agent..."
+echo "--------------------------------------------------"
+./build-image.sh "any" ai-agent
+docker image push "ghcr.io/jonaaix/laravel-aio" -a

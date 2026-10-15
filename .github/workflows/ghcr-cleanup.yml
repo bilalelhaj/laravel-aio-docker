@@ -1,0 +1,25 @@
+name: Cleanup Images
+
+on:
+    workflow_dispatch:
+
+permissions:
+    packages: write
+
+jobs:
+    cleanup:
+        name: Cleanup Old Images
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Prune untagged images
+                uses: snok/container-retention-policy@v3.0.0
+                with:
+                    image-names: laravel-aio
+                    # FIX: Must be literal "user" for personal accounts, not the username.
+                    account: user
+                    token: ${{ secrets.GITHUB_TOKEN }}
+                    # Focus on untagged images (orphans)
+                    tag-selection: untagged
+                    # Safety buffer: 2 weeks to avoid breaking active multi-arch references
+                    cut-off: 2w
+                    keep-n-most-recent: 3
