@@ -76,7 +76,7 @@ jobs:
                     fi
 
                     PHP_JSON=$(printf '%s\n' "${php_versions[@]}" | jq -R . | jq -s -c .)
-                    echo "php_versions=${PHP_JSON}" >> $GITHUB_OUTPUT
+                    echo "php_versions=${PHP_JSON}" >> "$GITHUB_OUTPUT"
 
                     # Build variants array based on inputs
                     variants=()
@@ -112,7 +112,7 @@ jobs:
                     fi
 
                     JSON_OUTPUT=$(printf '%s\n' "${variants[@]}" | jq -R . | jq -s -c .)
-                    echo "variants=${JSON_OUTPUT}" >> $GITHUB_OUTPUT
+                    echo "variants=${JSON_OUTPUT}" >> "$GITHUB_OUTPUT"
 
     build-and-push:
         name: Build Multi-Arch Images
@@ -146,7 +146,7 @@ jobs:
                 id: meta
                 uses: docker/metadata-action@v6
                 with:
-                    images: ghcr.io/jonaaix/laravel-aio
+                    images: ghcr.io/${{ github.repository_owner }}/laravel-aio
                     tags: |
                         type=raw,value=${{ inputs.version_tag }}-php${{ matrix.php_version }}-${{ matrix.variant }}
 
@@ -197,7 +197,7 @@ jobs:
                 id: meta
                 uses: docker/metadata-action@v6
                 with:
-                    images: ghcr.io/jonaaix/laravel-aio
+                    images: ghcr.io/${{ github.repository_owner }}/laravel-aio
                     tags: |
                         type=raw,value=${{ inputs.version_tag }}-ai-agent
 
